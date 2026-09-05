@@ -23,8 +23,8 @@ public class Ejecutar {
             System.out.println("b["+i+"]="+b[i]);
         }
 
-        for(int i = 0 ;i < b.length;i++){
-            System.out.println("b["+i+"]="+b[i]);
+        for (int i = 0; i < b.length; i++) {
+            System.out.println("b[" + i + "]=" + b[i] + " potencia 2 = " + Math.pow(b[i],2));
         }
 
     }
