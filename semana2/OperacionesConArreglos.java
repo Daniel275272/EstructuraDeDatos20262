@@ -1,27 +1,26 @@
-package semana2;
 
 import java.util.Arrays;
 
 public class OperacionesConArreglos {
-    public void mostrarArreglo(int[]a){
+   public void mostrarArreglo(int[] a){
         System.out.println(Arrays.toString(a));
     }
- 
+
     //Crear y llenar un arreglo con numeros aleatorios entre un mínimo y un máximo
-    public int[] llenarArrglo(int tam, int min, int max){
+    public int[] llenarArreglo(int tam, int min, int max){
         int[] a = new int[tam];
         for (int i = 0; i < a.length; i++) {
             //Llenar el arreglo b con números aleatorios entre 1(min) y 50(max)
             a[i] = (int)(Math.random() * (max - min - 1 ) + min);
         }
-        return a;
+        return a; 
     }
- 
-    //Sumar los extremos de un arreglo
+
+    //Sumar los extremos de un arreglo Punto10
     public int[] sumaExtremos(int[] a){
         int[] b = {};
         int tam = a.length; // tamaño del arreglo
- 
+
         if (a.length % 2 == 0) { //Cuando el arreglo es par
             b = new int[tam / 2]; // Creación del arreglo d con la mitad del tamaño del arreglo original
             for (int i = 0; i < tam / 2; i++) {
@@ -34,10 +33,9 @@ public class OperacionesConArreglos {
                     b[i] = a[i];
                 }else{
                     b[i] = a[i] + a[tam - 1 - i];
-                }
+                } 
             }
         }
         return b;
-    
     }
 }

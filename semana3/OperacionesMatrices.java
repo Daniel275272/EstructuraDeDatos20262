@@ -1,5 +1,3 @@
-package semana3;
-
 public class OperacionesMatrices {
   //Método que permite llenar la matriz con números enteros
     public int[][] llenarMatriz(int f, int c, int min, int max){
@@ -39,6 +37,44 @@ public class OperacionesMatrices {
         }        
         return cad;
     
+    }
+    //18
+    public int[][] tablaMultiplicar(int n) {
+    int[][] m = new int[n][n];
+    for (int i = 0; i < m.length; i++) {
+        for (int j = 0; j < m[0].length; j++) {
+            m[i][j] = (i + 1) * (j + 1);
+        }
+    }
+    return m;
+    }
+    //19
+    public int[][] matrizIdentidad(int n) {
+    int[][] m = new int[n][n];
+    for (int i = 0; i < m.length; i++) {
+        for (int j = 0; j < m[0].length; j++) {
+            if (i == j) {
+                m[i][j] = 1;
+            } else {
+                m[i][j] = 0;
+            }
+        }
+    }
+    return m;
+    }
+    //20
+    public int[][] matrizCerosArriba(int n) {
+    int[][] m = new int[n][n];
+    for (int i = 0; i < m.length; i++) {
+        for (int j = 0; j < m[0].length; j++) {
+            if (i < j) {
+                m[i][j] = 0;
+            } else {
+                m[i][j] = 1;
+            }
+        }
+    }
+    return m;
     }
 }
 
