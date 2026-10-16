@@ -48,7 +48,7 @@ public class Ejecutar {
         }
 
         
-        System.out.println("\n--- ESTUDIANTE CON PROMEDIO MÁS ALTO ---");
+        System.out.println("\n ESTUDIANTE CON PROMEDIO MÁS ALTO ");
         Estudiantes mejor = estudiantes[0];
         for (int i = 1; i < cantidad; i++) {
             if (estudiantes[i].tieneMejorPromedioQue(mejor)) {
