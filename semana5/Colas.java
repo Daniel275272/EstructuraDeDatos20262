@@ -2,7 +2,7 @@ package semana5;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Cola {
+public class Colas {
     public static void main(String[] args) {
         
         Queue<String> cola = new LinkedList<>();
