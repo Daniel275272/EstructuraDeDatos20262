@@ -4,16 +4,16 @@ import java.util.Queue;
 
 public class NumeroTelefonico {
      public static String formatear(int[] digitos) {
-        // Validar null
+     
         if (digitos == null) {
             return "Error: debe entregar exactamente 10 dígitos";
         }
-        // Validar longitud
+       
         if (digitos.length != 10) {
             return "Error: debe entregar exactamente 10 dígitos";
         }
 
-        // Encolar los dígitos en orden
+        
         Queue<Integer> cola = new LinkedList<>();
         for (int digito : digitos) {
             cola.offer(digito);

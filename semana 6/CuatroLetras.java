@@ -4,7 +4,7 @@ import java.util.Queue;
 
 public class CuatroLetras {
     public static String[] filtrar(String[] palabras) {
-        // Validar null
+        
         if (palabras == null) {
             return new String[0];
         }
