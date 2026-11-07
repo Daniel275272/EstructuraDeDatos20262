@@ -24,18 +24,37 @@ public class GestorSistema {
 
     private String reporteActual = "";
 
+    // CLASE OPERACION
     private class Operacion {
-        Runnable deshacer;
-        Runnable rehacer;
+        String tipo;
+        Estudiante estudiante;
+        Materia materia;
+        Aula aula;
 
-        Operacion(Runnable deshacer, Runnable rehacer) {
-            this.deshacer = deshacer;
-            this.rehacer = rehacer;
+        String codigoMateria;
+
+        int dia;
+        int hora;
+        int duracion;
+
+        int semestre;
+        int posicion;
+        Double notaAnterior;
+        double notaNueva;
+
+        int origen;
+        int destino;
+        int distanciaAnterior;
+        int distanciaNueva;
+
+        Operacion(String tipo) {
+            this.tipo = tipo;
         }
     }
 
-    private void guardarOperacion(Runnable deshacer, Runnable rehacer) {
-        pilaDeshacer.push(new Operacion(deshacer, rehacer));
+    // GUARDAR OPERACION
+    private void guardarOperacion(Operacion operacion) {
+        pilaDeshacer.push(operacion);
         pilaRehacer.clear();
     }
 
@@ -64,10 +83,13 @@ public class GestorSistema {
                 new Estudiante(nombre, id, email, semestre);
 
         if (universidad.registrarEstudiante(estudiante)) {
-            guardarOperacion(
-                () -> universidad.eliminarEstudiante(id),
-                () -> universidad.registrarEstudiante(estudiante)
-            );
+
+            Operacion operacion =
+                    new Operacion("REGISTRAR_ESTUDIANTE");
+
+            operacion.estudiante = estudiante;
+
+            guardarOperacion(operacion);
 
             System.out.println("Estudiante registrado exitosamente.");
         } else {
@@ -123,10 +145,13 @@ public class GestorSistema {
         }
 
         if (universidad.eliminarEstudiante(id)) {
-            guardarOperacion(
-                () -> universidad.registrarEstudiante(estudiante),
-                () -> universidad.eliminarEstudiante(id)
-            );
+
+            Operacion operacion =
+                    new Operacion("ELIMINAR_ESTUDIANTE");
+
+            operacion.estudiante = estudiante;
+
+            guardarOperacion(operacion);
 
             System.out.println("Estudiante eliminado exitosamente.");
         }
@@ -157,10 +182,14 @@ public class GestorSistema {
                 new Materia(codigo, nombre, cupos, creditos);
 
         if (universidad.registrarMateria(materia)) {
-            guardarOperacion(
-                () -> universidad.eliminarMateria(codigo),
-                () -> universidad.registrarMateria(materia)
-            );
+
+            Operacion operacion =
+                    new Operacion("REGISTRAR_MATERIA");
+
+            operacion.materia = materia;
+            operacion.codigoMateria = codigo;
+
+            guardarOperacion(operacion);
 
             System.out.println("Materia registrada exitosamente.");
         } else {
@@ -235,12 +264,16 @@ public class GestorSistema {
         }
 
         if (materia.inscribirEstudiante(estudiante)) {
-            guardarOperacion(
-                () -> materia.cancelarInscripcion(estudiante),
-                () -> materia.inscribirEstudiante(estudiante)
-            );
+
+            Operacion operacion = new Operacion("INSCRIBIR");
+
+            operacion.estudiante = estudiante;
+            operacion.materia = materia;
+
+            guardarOperacion(operacion);
 
             System.out.println("Inscripcion exitosa.");
+
         } else if (materia.estaEnEspera(estudiante)) {
             System.out.println("Estudiante agregado a la cola de espera.");
         } else {
@@ -273,10 +306,13 @@ public class GestorSistema {
 
         materia.cancelarInscripcion(estudiante);
 
-        guardarOperacion(
-            () -> materia.inscribirEstudiante(estudiante),
-            () -> materia.cancelarInscripcion(estudiante)
-        );
+        Operacion operacion =
+                new Operacion("CANCELAR_INSCRIPCION");
+
+        operacion.estudiante = estudiante;
+        operacion.materia = materia;
+
+        guardarOperacion(operacion);
 
         System.out.println("Cancelacion exitosa. Cupo liberado.");
     }
@@ -323,10 +359,16 @@ public class GestorSistema {
         int duracion = leerEntero();
 
         if (aula.reservar(dia, hora, duracion)) {
-            guardarOperacion(
-                () -> aula.liberar(dia, hora, duracion),
-                () -> aula.reservar(dia, hora, duracion)
-            );
+
+            Operacion operacion =
+                    new Operacion("RESERVAR_AULA");
+
+            operacion.aula = aula;
+            operacion.dia = dia;
+            operacion.hora = hora;
+            operacion.duracion = duracion;
+
+            guardarOperacion(operacion);
 
             System.out.println("Reserva exitosa.");
         } else {
@@ -358,10 +400,16 @@ public class GestorSistema {
         int duracion = leerEntero();
 
         if (aula.liberar(dia, hora, duracion)) {
-            guardarOperacion(
-                () -> aula.reservar(dia, hora, duracion),
-                () -> aula.liberar(dia, hora, duracion)
-            );
+
+            Operacion operacion =
+                    new Operacion("LIBERAR_AULA");
+
+            operacion.aula = aula;
+            operacion.dia = dia;
+            operacion.hora = hora;
+            operacion.duracion = duracion;
+
+            guardarOperacion(operacion);
 
             System.out.println("Horario liberado exitosamente.");
         } else {
@@ -420,6 +468,7 @@ public class GestorSistema {
             origen >= universidad.cantidadEdificios() ||
             destino >= universidad.cantidadEdificios() ||
             origen == destino || metros <= 0) {
+
             System.out.println("Datos de conexion invalidos.");
             return;
         }
@@ -427,11 +476,18 @@ public class GestorSistema {
         int anterior = universidad.obtenerDistancia(origen, destino);
 
         if (universidad.registrarDistancia(origen, destino, metros)) {
+
             if (anterior >= 0) {
-                guardarOperacion(
-                    () -> universidad.registrarDistancia(origen, destino, anterior),
-                    () -> universidad.registrarDistancia(origen, destino, metros)
-                );
+
+                Operacion operacion =
+                        new Operacion("CAMBIAR_DISTANCIA");
+
+                operacion.origen = origen;
+                operacion.destino = destino;
+                operacion.distanciaAnterior = anterior;
+                operacion.distanciaNueva = metros;
+
+                guardarOperacion(operacion);
             }
 
             System.out.println("Conexion registrada exitosamente.");
@@ -575,10 +631,16 @@ public class GestorSistema {
 
         estudiante.registrarNota(semestre, posicion, nota);
 
-        guardarOperacion(
-            () -> estudiante.getNotas()[semestre][posicion] = anterior,
-            () -> estudiante.registrarNota(semestre, posicion, nota)
-        );
+        Operacion operacion =
+                new Operacion("REGISTRAR_NOTA");
+
+        operacion.estudiante = estudiante;
+        operacion.semestre = semestre;
+        operacion.posicion = posicion;
+        operacion.notaAnterior = anterior;
+        operacion.notaNueva = nota;
+
+        guardarOperacion(operacion);
 
         System.out.println("Nota registrada exitosamente.");
     }
@@ -751,7 +813,59 @@ public class GestorSistema {
         }
 
         Operacion operacion = pilaDeshacer.pop();
-        operacion.deshacer.run();
+
+        if (operacion.tipo.equals("REGISTRAR_ESTUDIANTE")) {
+            universidad.eliminarEstudiante(
+                operacion.estudiante.getId()
+            );
+
+        } else if (operacion.tipo.equals("ELIMINAR_ESTUDIANTE")) {
+            universidad.registrarEstudiante(
+                operacion.estudiante
+            );
+
+        } else if (operacion.tipo.equals("REGISTRAR_MATERIA")) {
+            universidad.eliminarMateria(
+                operacion.codigoMateria
+            );
+
+        } else if (operacion.tipo.equals("INSCRIBIR")) {
+            operacion.materia.cancelarInscripcion(
+                operacion.estudiante
+            );
+
+        } else if (operacion.tipo.equals("CANCELAR_INSCRIPCION")) {
+            operacion.materia.inscribirEstudiante(
+                operacion.estudiante
+            );
+
+        } else if (operacion.tipo.equals("RESERVAR_AULA")) {
+            operacion.aula.liberar(
+                operacion.dia,
+                operacion.hora,
+                operacion.duracion
+            );
+
+        } else if (operacion.tipo.equals("LIBERAR_AULA")) {
+            operacion.aula.reservar(
+                operacion.dia,
+                operacion.hora,
+                operacion.duracion
+            );
+
+        } else if (operacion.tipo.equals("REGISTRAR_NOTA")) {
+            operacion.estudiante.getNotas()
+                [operacion.semestre][operacion.posicion] =
+                    operacion.notaAnterior;
+
+        } else if (operacion.tipo.equals("CAMBIAR_DISTANCIA")) {
+            universidad.registrarDistancia(
+                operacion.origen,
+                operacion.destino,
+                operacion.distanciaAnterior
+            );
+        }
+
         pilaRehacer.push(operacion);
 
         System.out.println("Operacion deshecha.");
@@ -767,7 +881,61 @@ public class GestorSistema {
         }
 
         Operacion operacion = pilaRehacer.pop();
-        operacion.rehacer.run();
+
+        if (operacion.tipo.equals("REGISTRAR_ESTUDIANTE")) {
+            universidad.registrarEstudiante(
+                operacion.estudiante
+            );
+
+        } else if (operacion.tipo.equals("ELIMINAR_ESTUDIANTE")) {
+            universidad.eliminarEstudiante(
+                operacion.estudiante.getId()
+            );
+
+        } else if (operacion.tipo.equals("REGISTRAR_MATERIA")) {
+            universidad.registrarMateria(
+                operacion.materia
+            );
+
+        } else if (operacion.tipo.equals("INSCRIBIR")) {
+            operacion.materia.inscribirEstudiante(
+                operacion.estudiante
+            );
+
+        } else if (operacion.tipo.equals("CANCELAR_INSCRIPCION")) {
+            operacion.materia.cancelarInscripcion(
+                operacion.estudiante
+            );
+
+        } else if (operacion.tipo.equals("RESERVAR_AULA")) {
+            operacion.aula.reservar(
+                operacion.dia,
+                operacion.hora,
+                operacion.duracion
+            );
+
+        } else if (operacion.tipo.equals("LIBERAR_AULA")) {
+            operacion.aula.liberar(
+                operacion.dia,
+                operacion.hora,
+                operacion.duracion
+            );
+
+        } else if (operacion.tipo.equals("REGISTRAR_NOTA")) {
+            operacion.estudiante.registrarNota(
+                operacion.semestre,
+                operacion.posicion,
+                operacion.notaNueva
+            );
+
+        } else if (operacion.tipo.equals("CAMBIAR_DISTANCIA")) {
+            universidad.registrarDistancia(
+                operacion.origen,
+                operacion.destino,
+                operacion.distanciaNueva
+            );
+        }
+
         pilaDeshacer.push(operacion);
 
         System.out.println("Operacion rehecha.");
