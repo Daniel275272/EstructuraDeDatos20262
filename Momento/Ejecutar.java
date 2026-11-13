@@ -7,7 +7,7 @@ public class Ejecutar {
 
         GestorSistema sistema = new GestorSistema();
 
-        sistema.mostrarMenu();
+        sistema.ejecutar();
 
     }
 }

@@ -1,3 +1,4 @@
+
 package Momento;
 
 import java.io.BufferedReader;
@@ -24,8 +25,27 @@ public class GestorSistema {
 
     private String reporteActual = "";
 
-    // CLASE OPERACION
+    //Estudiantes iniciales
+
+    public void cargarEstudiantesIniciales() {
+
+    Estudiante e1 = new Estudiante("Daniel", "1001", "daniel@gmail.com", 3);
+    Estudiante e2 = new Estudiante("Carlos", "1002", "carlos@gmail.com", 2);
+    Estudiante e3 = new Estudiante("Laura", "1003", "laura@gmail.com", 4);
+    Estudiante e4 = new Estudiante("Andres", "1004", "andres@gmail.com", 1);
+    Estudiante e5 = new Estudiante("Sofia", "1005", "sofia@gmail.com", 3);
+
+    universidad.registrarEstudiante(e1);
+    universidad.registrarEstudiante(e2);
+    universidad.registrarEstudiante(e3);
+    universidad.registrarEstudiante(e4);
+    universidad.registrarEstudiante(e5);
+}
+
+    // REGISTRO DE OPERACIONES PARA DESHACER Y REHACER
+
     private class Operacion {
+
         String tipo;
         Estudiante estudiante;
         Materia materia;
@@ -39,28 +59,200 @@ public class GestorSistema {
 
         int semestre;
         int posicion;
-        Double notaAnterior;
-        double notaNueva;
 
         int origen;
         int destino;
         int distanciaAnterior;
         int distanciaNueva;
 
+        Double notaAnterior;
+        double notaNueva;
+
+        boolean estabaEnEspera;
+
         Operacion(String tipo) {
             this.tipo = tipo;
         }
     }
 
-    // GUARDAR OPERACION
     private void guardarOperacion(Operacion operacion) {
         pilaDeshacer.push(operacion);
         pilaRehacer.clear();
     }
 
-    // 1. REGISTRAR ESTUDIANTE
-    public void registrarEstudiante() {
-        System.out.println("\n--- REGISTRO DE ESTUDIANTE ---");
+    // INICIO DEL SISTEMA
+
+    public static void main(String[] args) {
+        GestorSistema sistema = new GestorSistema();
+        sistema.ejecutar();
+    }
+
+    public void ejecutar() {
+        cargarEstudiantesIniciales();
+
+        int opcion;
+
+        do {
+            mostrarMenu();
+            opcion = leerEntero();
+
+            switch (opcion) {
+
+                case 1:
+                    registrarEstudiante();
+                    break;
+
+                case 2:
+                    buscarEstudiante();
+                    break;
+
+                case 3:
+                    listarEstudiantes();
+                    break;
+
+                case 4:
+                    eliminarEstudiante();
+                    break;
+
+                case 5:
+                    registrarMateria();
+                    break;
+
+                case 6:
+                    agregarPrerrequisito();
+                    break;
+
+                case 7:
+                    mostrarPrerrequisitos();
+                    break;
+
+                case 8:
+                    inscribirEstudiante();
+                    break;
+
+                case 9:
+                    cancelarInscripcion();
+                    break;
+
+                case 10:
+                    mostrarColaEspera();
+                    break;
+
+                case 11:
+                    reservarHorario();
+                    break;
+
+                case 12:
+                    liberarHorario();
+                    break;
+
+                case 13:
+                    consultarDisponibilidad();
+                    break;
+
+                case 14:
+                    registrarConexion();
+                    break;
+
+                case 15:
+                    calcularRuta();
+                    break;
+
+                case 16:
+                    registrarNota();
+                    break;
+
+                case 17:
+                    mostrarReporte();
+                    break;
+
+                case 18:
+                    abrirReporte();
+                    break;
+
+                case 19:
+                    navegarReportes();
+                    break;
+
+                case 20:
+                    deshacerOperacion();
+                    break;
+
+                case 21:
+                    rehacerOperacion();
+                    break;
+
+                case 22:
+                    cargarArchivoCSV();
+                    procesarSolicitudesBatch();
+                    break;
+
+                case 0:
+                    System.out.println("Cerrando el sistema...");
+                    break;
+
+                default:
+                    System.out.println("Opcion no valida.");
+                    break;
+            }
+
+        } while (opcion != 0);
+    }
+
+    // MENU PRINCIPAL
+
+    public void mostrarMenu() {
+
+        System.out.println("\n====================================");
+        System.out.println("     SISTEMA DE GESTION UNIVERSITARIA");
+        System.out.println("====================================");
+
+        System.out.println("1. Registrar estudiante");
+        System.out.println("2. Buscar estudiante");
+        System.out.println("3. Listar estudiantes");
+        System.out.println("4. Eliminar estudiante");
+
+        System.out.println("\n--- MATERIAS ---");
+        System.out.println("5. Registrar materia");
+        System.out.println("6. Agregar prerrequisito");
+        System.out.println("7. Mostrar prerrequisitos");
+        System.out.println("8. Inscribir estudiante");
+        System.out.println("9. Cancelar inscripcion");
+        System.out.println("10. Mostrar cola de espera");
+
+        System.out.println("\n--- AULAS ---");
+        System.out.println("11. Reservar horario");
+        System.out.println("12. Liberar horario");
+        System.out.println("13. Consultar disponibilidad");
+
+        System.out.println("\n--- RUTAS DEL CAMPUS ---");
+        System.out.println("14. Registrar conexion");
+        System.out.println("15. Calcular ruta");
+
+        System.out.println("\n--- CALIFICACIONES ---");
+        System.out.println("16. Registrar nota");
+        System.out.println("17. Mostrar reporte");
+
+        System.out.println("\n--- HISTORIAL DE REPORTES ---");
+        System.out.println("18. Abrir reporte");
+        System.out.println("19. Navegar reportes");
+
+        System.out.println("\n--- PILAS ---");
+        System.out.println("20. Deshacer operacion");
+        System.out.println("21. Rehacer operacion");
+
+        System.out.println("\n--- PROCESAMIENTO POR LOTES ---");
+        System.out.println("22. Cargar y procesar archivo CSV");
+
+        System.out.println("\n0. Salir");
+        System.out.print("\nSeleccione una opcion: ");
+    }
+
+    // ESTUDIANTES
+
+    private void registrarEstudiante() {
+
+        System.out.println("\n--- REGISTRAR ESTUDIANTE ---");
 
         System.out.print("ID: ");
         String id = teclado.nextLine();
@@ -71,11 +263,11 @@ public class GestorSistema {
         System.out.print("Email: ");
         String email = teclado.nextLine();
 
-        System.out.print("Semestre actual: ");
+        System.out.print("Semestre (0-9): ");
         int semestre = leerEntero();
 
-        if (semestre < 1 || semestre > 10) {
-            System.out.println("Semestre invalido.");
+        if (semestre < 0 || semestre >= 10) {
+            System.out.println("Semestre no valido.");
             return;
         }
 
@@ -84,32 +276,29 @@ public class GestorSistema {
 
         if (universidad.registrarEstudiante(estudiante)) {
 
-            Operacion operacion =
-                    new Operacion("REGISTRAR_ESTUDIANTE");
-
+            Operacion operacion = new Operacion("REGISTRAR_ESTUDIANTE");
             operacion.estudiante = estudiante;
 
             guardarOperacion(operacion);
 
-            System.out.println("Estudiante registrado exitosamente.");
+            System.out.println("Estudiante registrado correctamente.");
+
         } else {
-            System.out.println("Ya existe un estudiante con ese ID.");
+            System.out.println("No fue posible registrar el estudiante.");
         }
     }
 
-    // 2. BUSCAR ESTUDIANTE
-    public void buscarEstudiante() {
+    private void buscarEstudiante() {
+
         System.out.println("\n--- BUSCAR ESTUDIANTE ---");
 
-        System.out.print("ID: ");
+        System.out.print("Ingrese el ID: ");
         String id = teclado.nextLine();
 
         Estudiante estudiante = universidad.buscarEstudiante(id);
 
         if (estudiante == null) {
-            System.out.println(
-                "Error: no existe estudiante con ID: " + id
-            );
+            System.out.println("Estudiante no encontrado.");
             return;
         }
 
@@ -118,23 +307,24 @@ public class GestorSistema {
         Double promedio = estudiante.calcularPromedioAcumulado();
 
         if (promedio == null) {
-            System.out.println("Promedio acumulado: Sin notas registradas.");
+            System.out.println("Promedio acumulado: Sin notas.");
         } else {
-            System.out.printf("Promedio acumulado: %.2f%n", promedio);
+            System.out.println("Promedio acumulado: " + promedio);
         }
     }
 
-    // 3. LISTAR ESTUDIANTES
-    public void listarEstudiantes() {
+    private void listarEstudiantes() {
+
         System.out.println("\n--- LISTA DE ESTUDIANTES ---");
+
         universidad.mostrarEstudiantes();
     }
 
-    // 4. ELIMINAR ESTUDIANTE
-    public void eliminarEstudiante() {
+    private void eliminarEstudiante() {
+
         System.out.println("\n--- ELIMINAR ESTUDIANTE ---");
 
-        System.out.print("ID del estudiante: ");
+        System.out.print("Ingrese el ID: ");
         String id = teclado.nextLine();
 
         Estudiante estudiante = universidad.buscarEstudiante(id);
@@ -146,20 +336,23 @@ public class GestorSistema {
 
         if (universidad.eliminarEstudiante(id)) {
 
-            Operacion operacion =
-                    new Operacion("ELIMINAR_ESTUDIANTE");
-
+            Operacion operacion = new Operacion("ELIMINAR_ESTUDIANTE");
             operacion.estudiante = estudiante;
 
             guardarOperacion(operacion);
 
-            System.out.println("Estudiante eliminado exitosamente.");
+            System.out.println("Estudiante eliminado correctamente.");
+
+        } else {
+            System.out.println("No fue posible eliminar el estudiante.");
         }
     }
 
-    // 5. CREAR MATERIA
-    public void registrarMateria() {
-        System.out.println("\n--- CREAR MATERIA ---");
+    // MATERIAS
+
+    private void registrarMateria() {
+
+        System.out.println("\n--- REGISTRAR MATERIA ---");
 
         System.out.print("Codigo: ");
         String codigo = teclado.nextLine();
@@ -174,7 +367,7 @@ public class GestorSistema {
         int creditos = leerEntero();
 
         if (cupos <= 0 || creditos <= 0) {
-            System.out.println("Cupos y creditos deben ser positivos.");
+            System.out.println("Los cupos y creditos deben ser positivos.");
             return;
         }
 
@@ -183,22 +376,21 @@ public class GestorSistema {
 
         if (universidad.registrarMateria(materia)) {
 
-            Operacion operacion =
-                    new Operacion("REGISTRAR_MATERIA");
-
+            Operacion operacion = new Operacion("REGISTRAR_MATERIA");
             operacion.materia = materia;
             operacion.codigoMateria = codigo;
 
             guardarOperacion(operacion);
 
-            System.out.println("Materia registrada exitosamente.");
+            System.out.println("Materia registrada correctamente.");
+
         } else {
-            System.out.println("No se pudo registrar la materia.");
+            System.out.println("No fue posible registrar la materia.");
         }
     }
 
-    // 6. AGREGAR PRERREQUISITO
-    public void agregarPrerrequisito() {
+    private void agregarPrerrequisito() {
+
         System.out.println("\n--- AGREGAR PRERREQUISITO ---");
 
         System.out.print("Codigo de la materia principal: ");
@@ -207,24 +399,27 @@ public class GestorSistema {
         System.out.print("Codigo del prerrequisito: ");
         String codigoRequisito = teclado.nextLine();
 
-        Materia principal = universidad.buscarMateria(codigoPrincipal);
-        Materia requisito = universidad.buscarMateria(codigoRequisito);
+        Materia principal =
+                universidad.buscarMateria(codigoPrincipal);
+
+        Materia requisito =
+                universidad.buscarMateria(codigoRequisito);
 
         if (principal == null || requisito == null) {
-            System.out.println("No se encontraron las materias.");
+            System.out.println("Una de las materias no existe.");
             return;
         }
 
         if (principal.agregarPrerrequisito(requisito)) {
-            System.out.println("Prerrequisito agregado exitosamente.");
+            System.out.println("Prerrequisito agregado correctamente.");
         } else {
-            System.out.println("No se pudo agregar el prerrequisito.");
+            System.out.println("No fue posible agregar el prerrequisito.");
         }
     }
 
-    // 7. MOSTRAR PRERREQUISITOS
-    public void mostrarPrerrequisitos() {
-        System.out.println("\n--- MOSTRAR PRERREQUISITOS ---");
+    private void mostrarPrerrequisitos() {
+
+        System.out.println("\n--- CONSULTAR PRERREQUISITOS ---");
 
         System.out.print("Codigo de la materia: ");
         String codigo = teclado.nextLine();
@@ -240,55 +435,71 @@ public class GestorSistema {
         materia.mostrarPrerrequisitos();
     }
 
-    // 8. INSCRIBIR ESTUDIANTE
-    public void inscribirEstudiante() {
+    private void inscribirEstudiante() {
+
         System.out.println("\n--- INSCRIBIR ESTUDIANTE ---");
 
         System.out.print("ID del estudiante: ");
         String id = teclado.nextLine();
 
-        System.out.print("Codigo de materia: ");
+        System.out.print("Codigo de la materia: ");
         String codigo = teclado.nextLine();
 
         Estudiante estudiante = universidad.buscarEstudiante(id);
         Materia materia = universidad.buscarMateria(codigo);
 
-        if (estudiante == null || materia == null) {
-            System.out.println("Estudiante o materia no encontrados.");
+        if (estudiante == null) {
+            System.out.println("Estudiante no encontrado.");
+            return;
+        }
+
+        if (materia == null) {
+            System.out.println("Materia no encontrada.");
             return;
         }
 
         if (!materia.cumplePrerrequisitos(estudiante)) {
-            System.out.println("El estudiante no ha aprobado los prerrequisitos.");
+            System.out.println("El estudiante no cumple los prerrequisitos.");
             return;
         }
 
-        if (materia.inscribirEstudiante(estudiante)) {
+        boolean inscrito = materia.inscribirEstudiante(estudiante);
+
+        if (inscrito) {
 
             Operacion operacion = new Operacion("INSCRIBIR");
-
             operacion.estudiante = estudiante;
             operacion.materia = materia;
+            operacion.estabaEnEspera = false;
 
             guardarOperacion(operacion);
 
-            System.out.println("Inscripcion exitosa.");
+            System.out.println("Inscripcion realizada correctamente.");
 
         } else if (materia.estaEnEspera(estudiante)) {
-            System.out.println("Estudiante agregado a la cola de espera.");
+
+            Operacion operacion = new Operacion("INSCRIBIR");
+            operacion.estudiante = estudiante;
+            operacion.materia = materia;
+            operacion.estabaEnEspera = true;
+
+            guardarOperacion(operacion);
+
+            System.out.println("No hay cupos. Estudiante agregado a la lista de espera.");
+
         } else {
-            System.out.println("El estudiante ya esta inscrito o en espera.");
+            System.out.println("No fue posible realizar la inscripcion.");
         }
     }
 
-    // 9. CANCELAR INSCRIPCION
-    public void cancelarInscripcion() {
+    private void cancelarInscripcion() {
+
         System.out.println("\n--- CANCELAR INSCRIPCION ---");
 
         System.out.print("ID del estudiante: ");
         String id = teclado.nextLine();
 
-        System.out.print("Codigo de materia: ");
+        System.out.print("Codigo de la materia: ");
         String codigo = teclado.nextLine();
 
         Estudiante estudiante = universidad.buscarEstudiante(id);
@@ -300,28 +511,30 @@ public class GestorSistema {
         }
 
         if (!materia.estaInscrito(estudiante)) {
-            System.out.println("El estudiante no esta inscrito.");
+            System.out.println("El estudiante no esta inscrito en esta materia.");
             return;
         }
 
-        materia.cancelarInscripcion(estudiante);
+        if (materia.cancelarInscripcion(estudiante)) {
 
-        Operacion operacion =
-                new Operacion("CANCELAR_INSCRIPCION");
+            Operacion operacion = new Operacion("CANCELAR_INSCRIPCION");
+            operacion.estudiante = estudiante;
+            operacion.materia = materia;
 
-        operacion.estudiante = estudiante;
-        operacion.materia = materia;
+            guardarOperacion(operacion);
 
-        guardarOperacion(operacion);
+            System.out.println("Inscripcion cancelada correctamente.");
 
-        System.out.println("Cancelacion exitosa. Cupo liberado.");
+        } else {
+            System.out.println("No fue posible cancelar la inscripcion.");
+        }
     }
 
-    // 10. MOSTRAR COLA DE ESPERA
-    public void mostrarColaEspera() {
-        System.out.println("\n--- MOSTRAR COLA DE ESPERA ---");
+    private void mostrarColaEspera() {
 
-        System.out.print("Codigo de materia: ");
+        System.out.println("\n--- COLA DE ESPERA ---");
+
+        System.out.print("Codigo de la materia: ");
         String codigo = teclado.nextLine();
 
         Materia materia = universidad.buscarMateria(codigo);
@@ -331,13 +544,17 @@ public class GestorSistema {
             return;
         }
 
-        System.out.println("Materia: " + materia.getNombre());
         materia.mostrarColaEspera();
+
+        System.out.println("Estudiantes en espera: " +
+                materia.cantidadEnEspera());
     }
 
-    // 11. RESERVAR HORARIO
-    public void reservarHorario() {
-        System.out.println("\n--- RESERVAR HORARIO EN AULA ---");
+    // AULAS
+
+    private void reservarHorario() {
+
+        System.out.println("\n--- RESERVAR AULA ---");
 
         System.out.print("Codigo del aula: ");
         String codigo = teclado.nextLine();
@@ -349,10 +566,10 @@ public class GestorSistema {
             return;
         }
 
-        System.out.print("Dia (1=Lunes, 7=Domingo): ");
-        int dia = leerEntero() - 1;
+        System.out.print("Dia (0-6): ");
+        int dia = leerEntero();
 
-        System.out.print("Hora (0 a 23): ");
+        System.out.print("Hora de inicio (0-23): ");
         int hora = leerEntero();
 
         System.out.print("Duracion en horas: ");
@@ -360,9 +577,7 @@ public class GestorSistema {
 
         if (aula.reservar(dia, hora, duracion)) {
 
-            Operacion operacion =
-                    new Operacion("RESERVAR_AULA");
-
+            Operacion operacion = new Operacion("RESERVAR_AULA");
             operacion.aula = aula;
             operacion.dia = dia;
             operacion.hora = hora;
@@ -370,15 +585,16 @@ public class GestorSistema {
 
             guardarOperacion(operacion);
 
-            System.out.println("Reserva exitosa.");
+            System.out.println("Aula reservada correctamente.");
+
         } else {
-            System.out.println("Horario conflictivo o datos invalidos.");
+            System.out.println("No fue posible reservar el horario.");
         }
     }
 
-    // 12. LIBERAR HORARIO
-    public void liberarHorario() {
-        System.out.println("\n--- LIBERAR HORARIO ---");
+    private void liberarHorario() {
+
+        System.out.println("\n--- LIBERAR AULA ---");
 
         System.out.print("Codigo del aula: ");
         String codigo = teclado.nextLine();
@@ -390,10 +606,10 @@ public class GestorSistema {
             return;
         }
 
-        System.out.print("Dia (1=Lunes, 7=Domingo): ");
-        int dia = leerEntero() - 1;
+        System.out.print("Dia (0-6): ");
+        int dia = leerEntero();
 
-        System.out.print("Hora (0 a 23): ");
+        System.out.print("Hora de inicio (0-23): ");
         int hora = leerEntero();
 
         System.out.print("Duracion en horas: ");
@@ -401,9 +617,7 @@ public class GestorSistema {
 
         if (aula.liberar(dia, hora, duracion)) {
 
-            Operacion operacion =
-                    new Operacion("LIBERAR_AULA");
-
+            Operacion operacion = new Operacion("LIBERAR_AULA");
             operacion.aula = aula;
             operacion.dia = dia;
             operacion.hora = hora;
@@ -411,14 +625,15 @@ public class GestorSistema {
 
             guardarOperacion(operacion);
 
-            System.out.println("Horario liberado exitosamente.");
+            System.out.println("Horario liberado correctamente.");
+
         } else {
-            System.out.println("No se pudo liberar el horario.");
+            System.out.println("No fue posible liberar el horario.");
         }
     }
 
-    // 13. CONSULTAR DISPONIBILIDAD
-    public void consultarDisponibilidad() {
+    private void consultarDisponibilidad() {
+
         System.out.println("\n--- CONSULTAR DISPONIBILIDAD ---");
 
         System.out.print("Codigo del aula: ");
@@ -431,27 +646,24 @@ public class GestorSistema {
             return;
         }
 
-        System.out.print("Dia (1=Lunes, 7=Domingo): ");
-        int dia = leerEntero() - 1;
+        System.out.print("Dia (0-6): ");
+        int dia = leerEntero();
 
-        System.out.print("Hora (0 a 23): ");
+        System.out.print("Hora (0-23): ");
         int hora = leerEntero();
 
-        if (dia < 0 || dia > 6 || hora < 0 || hora > 23) {
-            System.out.println("Dia u hora invalidos.");
-            return;
-        }
-
         if (aula.consultarDisponibilidad(dia, hora)) {
-            System.out.println("Horario LIBRE.");
+            System.out.println("El aula esta disponible.");
         } else {
-            System.out.println("Horario RESERVADO.");
+            System.out.println("El aula no esta disponible o los datos no son validos.");
         }
     }
 
-    // 14. CONEXIONES ENTRE EDIFICIOS
-    public void registrarConexion() {
-        System.out.println("\n--- AGREGAR CONEXION ENTRE EDIFICIOS ---");
+    // CONEXIONES Y RUTAS DEL CAMPUS
+
+    private void registrarConexion() {
+
+        System.out.println("\n--- REGISTRAR CONEXION ---");
 
         universidad.mostrarEdificios();
 
@@ -462,43 +674,33 @@ public class GestorSistema {
         int destino = leerEntero();
 
         System.out.print("Distancia en metros: ");
-        int metros = leerEntero();
-
-        if (origen < 0 || destino < 0 ||
-            origen >= universidad.cantidadEdificios() ||
-            destino >= universidad.cantidadEdificios() ||
-            origen == destino || metros <= 0) {
-
-            System.out.println("Datos de conexion invalidos.");
-            return;
-        }
+        int distancia = leerEntero();
 
         int anterior = universidad.obtenerDistancia(origen, destino);
 
-        if (universidad.registrarDistancia(origen, destino, metros)) {
+        if (universidad.registrarDistancia(origen, destino, distancia)) {
 
-            if (anterior >= 0) {
+            Operacion operacion = new Operacion("CAMBIAR_DISTANCIA");
 
-                Operacion operacion =
-                        new Operacion("CAMBIAR_DISTANCIA");
+            operacion.origen = origen;
+            operacion.destino = destino;
+            operacion.distanciaAnterior = anterior;
+            operacion.distanciaNueva = distancia;
 
-                operacion.origen = origen;
-                operacion.destino = destino;
-                operacion.distanciaAnterior = anterior;
-                operacion.distanciaNueva = metros;
+            guardarOperacion(operacion);
 
-                guardarOperacion(operacion);
-            }
+            System.out.println("Conexion registrada correctamente.");
 
-            System.out.println("Conexion registrada exitosamente.");
         } else {
-            System.out.println("No se pudo registrar la conexion.");
+            System.out.println("No fue posible registrar la conexion.");
         }
     }
 
-    // 15. DIJKSTRA
-    public void calcularRuta() {
-        System.out.println("\n--- CALCULAR RUTA MAS CORTA ---");
+    private void calcularRuta() {
+
+        System.out.println("\n--- CALCULAR RUTA ---");
+
+        universidad.mostrarEdificios();
 
         int cantidad = universidad.cantidadEdificios();
 
@@ -507,38 +709,44 @@ public class GestorSistema {
             return;
         }
 
-        universidad.mostrarEdificios();
-
-        System.out.print("Edificio de origen (indice): ");
+        System.out.print("Edificio de origen: ");
         int origen = leerEntero();
 
-        System.out.print("Edificio de destino (indice): ");
+        System.out.print("Edificio de destino: ");
         int destino = leerEntero();
 
-        if (origen < 0 || destino < 0 ||
-            origen >= cantidad || destino >= cantidad) {
-            System.out.println("Edificio no valido.");
+        if (origen < 0 || origen >= cantidad ||
+            destino < 0 || destino >= cantidad) {
+
+            System.out.println("Indices no validos.");
             return;
         }
+
+        int[][] distancias = universidad.getDistancias();
 
         int[] distanciaMinima = new int[cantidad];
         boolean[] visitado = new boolean[cantidad];
         int[] anterior = new int[cantidad];
 
-        int[][] distancias = universidad.getDistancias();
+        int infinito = 999999999;
 
         for (int i = 0; i < cantidad; i++) {
-            distanciaMinima[i] = Integer.MAX_VALUE;
+            distanciaMinima[i] = infinito;
+            visitado[i] = false;
             anterior[i] = -1;
         }
 
         distanciaMinima[origen] = 0;
 
+        // ALGORITMO DE DIJKSTRA
+
         for (int i = 0; i < cantidad; i++) {
+
+            int menor = infinito;
             int actual = -1;
-            int menor = Integer.MAX_VALUE;
 
             for (int j = 0; j < cantidad; j++) {
+
                 if (!visitado[j] && distanciaMinima[j] < menor) {
                     menor = distanciaMinima[j];
                     actual = j;
@@ -552,24 +760,29 @@ public class GestorSistema {
             visitado[actual] = true;
 
             for (int j = 0; j < cantidad; j++) {
-                int peso = distancias[actual][j];
 
-                if (peso >= 0 && !visitado[j] &&
-                    distanciaMinima[actual] != Integer.MAX_VALUE &&
-                    distanciaMinima[actual] + peso < distanciaMinima[j]) {
+                if (distancias[actual][j] >= 0 &&
+                    !visitado[j]) {
 
-                    distanciaMinima[j] = distanciaMinima[actual] + peso;
-                    anterior[j] = actual;
+                    int nuevaDistancia =
+                            distanciaMinima[actual] + distancias[actual][j];
+
+                    if (nuevaDistancia < distanciaMinima[j]) {
+
+                        distanciaMinima[j] = nuevaDistancia;
+                        anterior[j] = actual;
+                    }
                 }
             }
         }
 
-        if (distanciaMinima[destino] == Integer.MAX_VALUE) {
-            System.out.println("No existe una ruta.");
+        if (distanciaMinima[destino] == infinito) {
+            System.out.println("No existe una ruta entre los edificios.");
             return;
         }
 
         Stack<Integer> ruta = new Stack<>();
+
         int actual = destino;
 
         while (actual != -1) {
@@ -577,28 +790,29 @@ public class GestorSistema {
             actual = anterior[actual];
         }
 
-        System.out.println("\n--- RESULTADO ---");
-        System.out.println("Ruta mas corta:");
+        System.out.println("\nRuta encontrada:");
 
         while (!ruta.isEmpty()) {
-            int indice = ruta.pop();
 
-            System.out.print(
-                universidad.buscarEdificio(indice).getNombre()
-            );
+            int posicion = ruta.pop();
+
+            Edificio edificio = universidad.buscarEdificio(posicion);
+
+            System.out.print(edificio.getNombre());
 
             if (!ruta.isEmpty()) {
                 System.out.print(" -> ");
             }
         }
 
-        System.out.println();
-        System.out.println("Distancia TOTAL: " +
+        System.out.println("\nDistancia total: " +
                 distanciaMinima[destino] + " metros");
     }
 
-    // 16. REGISTRAR NOTA
-    public void registrarNota() {
+    // CALIFICACIONES
+
+    private void registrarNota() {
+
         System.out.println("\n--- REGISTRAR NOTA ---");
 
         System.out.print("ID del estudiante: ");
@@ -611,19 +825,20 @@ public class GestorSistema {
             return;
         }
 
-        System.out.print("Semestre (1 a 10): ");
-        int semestre = leerEntero() - 1;
+        System.out.print("Semestre (0-9): ");
+        int semestre = leerEntero();
 
-        System.out.print("Posicion de materia (1 a 20): ");
-        int posicion = leerEntero() - 1;
+        System.out.print("Posicion de la materia (0-19): ");
+        int posicion = leerEntero();
 
-        System.out.print("Nota (0 a 5): ");
+        System.out.print("Nota (0.0-5.0): ");
         double nota = leerDecimal();
 
         if (semestre < 0 || semestre >= 10 ||
             posicion < 0 || posicion >= 20 ||
             nota < 0 || nota > 5) {
-            System.out.println("Datos de nota invalidos.");
+
+            System.out.println("Datos de nota no validos.");
             return;
         }
 
@@ -631,8 +846,7 @@ public class GestorSistema {
 
         estudiante.registrarNota(semestre, posicion, nota);
 
-        Operacion operacion =
-                new Operacion("REGISTRAR_NOTA");
+        Operacion operacion = new Operacion("REGISTRAR_NOTA");
 
         operacion.estudiante = estudiante;
         operacion.semestre = semestre;
@@ -642,37 +856,39 @@ public class GestorSistema {
 
         guardarOperacion(operacion);
 
-        System.out.println("Nota registrada exitosamente.");
+        System.out.println("Nota registrada correctamente.");
     }
 
-    // PROMEDIO POR SEMESTRE
-    public double calcularPromedioSemestre(String id, int semestre) {
-        Estudiante estudiante = universidad.buscarEstudiante(id);
-
-        if (estudiante == null) {
-            return 0;
-        }
+    private Double calcularPromedioSemestre(
+            Estudiante estudiante, int semestre) {
 
         Double promedio = estudiante.calcularPromedioSemestral(semestre);
 
-        return promedio == null ? 0 : promedio;
+        if (promedio == null) {
+            return 0.0;
+        }
+
+        return promedio;
     }
 
-    // PROMEDIO ACUMULADO
-    public double calcularPromedioAcumulado(String id) {
-        Estudiante estudiante = universidad.buscarEstudiante(id);
-
-        if (estudiante == null) {
-            return 0;
-        }
+    private Double calcularPromedioAcumulado(Estudiante estudiante) {
 
         Double promedio = estudiante.calcularPromedioAcumulado();
 
-        return promedio == null ? 0 : promedio;
+        if (promedio == null) {
+            return 0.0;
+        }
+
+        return promedio;
     }
 
-    // 17. REPORTE ACADEMICO
-    public void mostrarReporte(String id) {
+    private void mostrarReporte() {
+
+        System.out.println("\n--- REPORTE ACADEMICO ---");
+
+        System.out.print("ID del estudiante: ");
+        String id = teclado.nextLine();
+
         Estudiante estudiante = universidad.buscarEstudiante(id);
 
         if (estudiante == null) {
@@ -680,93 +896,140 @@ public class GestorSistema {
             return;
         }
 
-        System.out.println("\n--- REPORTE ACADEMICO ---");
-        System.out.println("Estudiante: " + estudiante.getNombre());
-        System.out.println("ID: " + estudiante.getId());
+        estudiante.mostrarInformacion();
 
-        for (int i = 0; i < 10; i++) {
-            Double promedio = estudiante.calcularPromedioSemestral(i);
+        System.out.println("\n--- NOTAS POR SEMESTRE ---");
 
-            if (promedio != null) {
-                System.out.println("\nSemestre " + (i + 1));
+        for (int semestre = 0; semestre < 10; semestre++) {
 
-                for (int j = 0; j < 20; j++) {
-                    Double nota = estudiante.consultarNota(i, j);
+            System.out.println("\nSemestre " + semestre);
 
-                    if (nota != null) {
-                        String estado = nota >= 3.0
-                                ? "APROBADA" : "REPROBADA";
+            int cantidadNotas = 0;
 
-                        System.out.println(
-                            "Materia " + (j + 1) +
-                            ": " + nota + " - " + estado
-                        );
+            for (int posicion = 0; posicion < 20; posicion++) {
+
+                Double nota = estudiante.consultarNota(semestre, posicion);
+
+                if (nota != null) {
+
+                    String estado;
+
+                    if (nota >= 3.0) {
+                        estado = "APROBADA";
+                    } else {
+                        estado = "REPROBADA";
                     }
+
+                    System.out.println(
+                            "Materia " + posicion +
+                            " | Nota: " + nota +
+                            " | Estado: " + estado
+                    );
+
+                    cantidadNotas++;
                 }
+            }
 
-                System.out.printf(
-                    "Promedio semestral: %.2f%n",
-                    promedio
-                );
-
+            if (cantidadNotas == 0) {
+                System.out.println("No hay notas registradas.");
+            } else {
                 System.out.println(
-                    "Aprobadas: " +
-                    estudiante.contarMateriasAprobadas(i)
-                );
-
-                System.out.println(
-                    "Reprobadas: " +
-                    estudiante.contarMateriasReprobadas(i)
+                        "Promedio del semestre: " +
+                        calcularPromedioSemestre(estudiante, semestre)
                 );
             }
+
+            System.out.println(
+                    "Materias aprobadas: " +
+                    estudiante.contarMateriasAprobadas(semestre)
+            );
+
+            System.out.println(
+                    "Materias reprobadas: " +
+                    estudiante.contarMateriasReprobadas(semestre)
+            );
         }
 
-        Double acumulado = estudiante.calcularPromedioAcumulado();
-
-        System.out.println("\n=== RESUMEN ACUMULADO ===");
-
-        if (acumulado == null) {
-            System.out.println("No hay notas registradas.");
-        } else {
-            System.out.printf("Promedio acumulado: %.2f%n", acumulado);
-        }
+        System.out.println("\n--- RESUMEN ACUMULADO ---");
 
         System.out.println(
-            "Materias aprobadas: " +
-            estudiante.contarMateriasAprobadasAcumuladas()
+                "Promedio acumulado: " +
+                calcularPromedioAcumulado(estudiante)
         );
 
         System.out.println(
-            "Materias reprobadas: " +
-            estudiante.contarMateriasReprobadasAcumuladas()
+                "Materias aprobadas: " +
+                estudiante.contarMateriasAprobadasAcumuladas()
+        );
+
+        System.out.println(
+                "Materias reprobadas: " +
+                estudiante.contarMateriasReprobadasAcumuladas()
         );
     }
 
-    public void abrirReporte() {
+    // NAVEGACION ENTRE REPORTES CON PILAS
+
+    private void abrirReporte() {
+
+        System.out.println("\n--- ABRIR REPORTE ---");
+
         System.out.print("ID del estudiante: ");
         String id = teclado.nextLine();
 
-        if (universidad.buscarEstudiante(id) == null) {
+        Estudiante estudiante = universidad.buscarEstudiante(id);
+
+        if (estudiante == null) {
             System.out.println("Estudiante no encontrado.");
             return;
         }
 
-        if (!reporteActual.isEmpty()) {
+        if (!reporteActual.equals("")) {
             pilaReportesAtras.push(reporteActual);
         }
 
-        reporteActual = id;
         pilaReportesAdelante.clear();
 
-        mostrarReporte(id);
+        StringBuilder reporte = new StringBuilder();
+
+        reporte.append("REPORTE ACADEMICO\n");
+        reporte.append("Nombre: ").append(estudiante.getNombre()).append("\n");
+        reporte.append("ID: ").append(estudiante.getId()).append("\n");
+        reporte.append("Email: ").append(estudiante.getEmail()).append("\n");
+        reporte.append("Semestre: ").append(estudiante.getSemestre()).append("\n");
+
+        for (int semestre = 0; semestre < 10; semestre++) {
+
+            reporte.append("\nSemestre ").append(semestre).append("\n");
+
+            for (int posicion = 0; posicion < 20; posicion++) {
+
+                Double nota = estudiante.consultarNota(semestre, posicion);
+
+                if (nota != null) {
+
+                    reporte.append("Materia ")
+                            .append(posicion)
+                            .append(": ")
+                            .append(nota)
+                            .append("\n");
+                }
+            }
+        }
+
+        reporteActual = reporte.toString();
+
+        System.out.println(reporteActual);
     }
 
-    // 18. NAVEGADOR DE REPORTES
-    public void navegarReportes() {
-        System.out.println("\n--- NAVEGADOR DE REPORTES ---");
+    private void navegarReportes() {
+
+        System.out.println("\n--- NAVEGACION DE REPORTES ---");
+
         System.out.println("1. Reporte anterior");
         System.out.println("2. Reporte siguiente");
-        System.out.print("Seleccione: ");
+
+        System.out.print("Seleccione una opcion: ");
 
         int opcion = leerEntero();
 
@@ -779,7 +1042,8 @@ public class GestorSistema {
         }
     }
 
-    public void regresarReporte() {
+    private void regresarReporte() {
+
         if (pilaReportesAtras.isEmpty()) {
             System.out.println("No hay reportes anteriores.");
             return;
@@ -788,10 +1052,11 @@ public class GestorSistema {
         pilaReportesAdelante.push(reporteActual);
         reporteActual = pilaReportesAtras.pop();
 
-        mostrarReporte(reporteActual);
+        System.out.println(reporteActual);
     }
 
-    public void avanzarReporte() {
+    private void avanzarReporte() {
+
         if (pilaReportesAdelante.isEmpty()) {
             System.out.println("No hay reportes siguientes.");
             return;
@@ -800,12 +1065,12 @@ public class GestorSistema {
         pilaReportesAtras.push(reporteActual);
         reporteActual = pilaReportesAdelante.pop();
 
-        mostrarReporte(reporteActual);
+        System.out.println(reporteActual);
     }
 
-    // 19. DESHACER
-    public void deshacerOperacion() {
-        System.out.println("\n--- DESHACER ---");
+    // DESHACER OPERACIONES
+
+    private void deshacerOperacion() {
 
         if (pilaDeshacer.isEmpty()) {
             System.out.println("No hay operaciones para deshacer.");
@@ -814,66 +1079,112 @@ public class GestorSistema {
 
         Operacion operacion = pilaDeshacer.pop();
 
-        if (operacion.tipo.equals("REGISTRAR_ESTUDIANTE")) {
-            universidad.eliminarEstudiante(
-                operacion.estudiante.getId()
-            );
+        switch (operacion.tipo) {
 
-        } else if (operacion.tipo.equals("ELIMINAR_ESTUDIANTE")) {
-            universidad.registrarEstudiante(
-                operacion.estudiante
-            );
+            case "REGISTRAR_ESTUDIANTE":
 
-        } else if (operacion.tipo.equals("REGISTRAR_MATERIA")) {
-            universidad.eliminarMateria(
-                operacion.codigoMateria
-            );
+                universidad.eliminarEstudiante(
+                        operacion.estudiante.getId()
+                );
 
-        } else if (operacion.tipo.equals("INSCRIBIR")) {
-            operacion.materia.cancelarInscripcion(
-                operacion.estudiante
-            );
+                break;
 
-        } else if (operacion.tipo.equals("CANCELAR_INSCRIPCION")) {
-            operacion.materia.inscribirEstudiante(
-                operacion.estudiante
-            );
+            case "ELIMINAR_ESTUDIANTE":
 
-        } else if (operacion.tipo.equals("RESERVAR_AULA")) {
-            operacion.aula.liberar(
-                operacion.dia,
-                operacion.hora,
-                operacion.duracion
-            );
+                universidad.registrarEstudiante(
+                        operacion.estudiante
+                );
 
-        } else if (operacion.tipo.equals("LIBERAR_AULA")) {
-            operacion.aula.reservar(
-                operacion.dia,
-                operacion.hora,
-                operacion.duracion
-            );
+                break;
 
-        } else if (operacion.tipo.equals("REGISTRAR_NOTA")) {
-            operacion.estudiante.getNotas()
-                [operacion.semestre][operacion.posicion] =
-                    operacion.notaAnterior;
+            case "REGISTRAR_MATERIA":
 
-        } else if (operacion.tipo.equals("CAMBIAR_DISTANCIA")) {
-            universidad.registrarDistancia(
-                operacion.origen,
-                operacion.destino,
-                operacion.distanciaAnterior
-            );
+                universidad.eliminarMateria(
+                        operacion.codigoMateria
+                );
+
+                break;
+
+            case "INSCRIBIR":
+
+                if (operacion.estabaEnEspera) {
+                    operacion.materia.retirarDeListaEspera(
+                            operacion.estudiante
+                    );
+                } else {
+                    operacion.materia.cancelarInscripcion(
+                            operacion.estudiante
+                    );
+                }
+
+                break;
+
+            case "CANCELAR_INSCRIPCION":
+
+                operacion.materia.inscribirEstudiante(
+                        operacion.estudiante
+                );
+
+                break;
+
+            case "RESERVAR_AULA":
+
+                operacion.aula.liberar(
+                        operacion.dia,
+                        operacion.hora,
+                        operacion.duracion
+                );
+
+                break;
+
+            case "LIBERAR_AULA":
+
+                operacion.aula.reservar(
+                        operacion.dia,
+                        operacion.hora,
+                        operacion.duracion
+                );
+
+                break;
+
+            case "REGISTRAR_NOTA":
+
+                operacion.estudiante.getNotas()
+                        [operacion.semestre][operacion.posicion]
+                        = operacion.notaAnterior;
+
+                break;
+
+            case "CAMBIAR_DISTANCIA":
+
+                if (operacion.distanciaAnterior >= 0) {
+
+                    universidad.registrarDistancia(
+                            operacion.origen,
+                            operacion.destino,
+                            operacion.distanciaAnterior
+                    );
+
+                } else {
+
+                    universidad.getDistancias()
+                            [operacion.origen][operacion.destino] = -1;
+
+                    universidad.getDistancias()
+                            [operacion.destino][operacion.origen] = -1;
+                }
+
+                break;
         }
 
         pilaRehacer.push(operacion);
 
-        System.out.println("Operacion deshecha.");
+        System.out.println("Operacion deshecha correctamente.");
     }
 
-    // 20. REHACER
-    public void rehacerOperacion() {
-        System.out.println("\n--- REHACER ---");
+    // REHACER OPERACIONES
+
+    private void rehacerOperacion() {
 
         if (pilaRehacer.isEmpty()) {
             System.out.println("No hay operaciones para rehacer.");
@@ -882,305 +1193,275 @@ public class GestorSistema {
 
         Operacion operacion = pilaRehacer.pop();
 
-        if (operacion.tipo.equals("REGISTRAR_ESTUDIANTE")) {
-            universidad.registrarEstudiante(
-                operacion.estudiante
-            );
+        switch (operacion.tipo) {
 
-        } else if (operacion.tipo.equals("ELIMINAR_ESTUDIANTE")) {
-            universidad.eliminarEstudiante(
-                operacion.estudiante.getId()
-            );
+            case "REGISTRAR_ESTUDIANTE":
 
-        } else if (operacion.tipo.equals("REGISTRAR_MATERIA")) {
-            universidad.registrarMateria(
-                operacion.materia
-            );
+                universidad.registrarEstudiante(
+                        operacion.estudiante
+                );
 
-        } else if (operacion.tipo.equals("INSCRIBIR")) {
-            operacion.materia.inscribirEstudiante(
-                operacion.estudiante
-            );
+                break;
 
-        } else if (operacion.tipo.equals("CANCELAR_INSCRIPCION")) {
-            operacion.materia.cancelarInscripcion(
-                operacion.estudiante
-            );
+            case "ELIMINAR_ESTUDIANTE":
 
-        } else if (operacion.tipo.equals("RESERVAR_AULA")) {
-            operacion.aula.reservar(
-                operacion.dia,
-                operacion.hora,
-                operacion.duracion
-            );
+                universidad.eliminarEstudiante(
+                        operacion.estudiante.getId()
+                );
 
-        } else if (operacion.tipo.equals("LIBERAR_AULA")) {
-            operacion.aula.liberar(
-                operacion.dia,
-                operacion.hora,
-                operacion.duracion
-            );
+                break;
 
-        } else if (operacion.tipo.equals("REGISTRAR_NOTA")) {
-            operacion.estudiante.registrarNota(
-                operacion.semestre,
-                operacion.posicion,
-                operacion.notaNueva
-            );
+            case "REGISTRAR_MATERIA":
 
-        } else if (operacion.tipo.equals("CAMBIAR_DISTANCIA")) {
-            universidad.registrarDistancia(
-                operacion.origen,
-                operacion.destino,
-                operacion.distanciaNueva
-            );
+                universidad.registrarMateria(
+                        operacion.materia
+                );
+
+                break;
+
+            case "INSCRIBIR":
+
+                if (operacion.estabaEnEspera) {
+                    operacion.materia.inscribirEstudiante(
+                            operacion.estudiante
+                    );
+                } else {
+                    operacion.materia.inscribirEstudiante(
+                            operacion.estudiante
+                    );
+                }
+
+                break;
+
+            case "CANCELAR_INSCRIPCION":
+
+                operacion.materia.cancelarInscripcion(
+                        operacion.estudiante
+                );
+
+                break;
+
+            case "RESERVAR_AULA":
+
+                operacion.aula.reservar(
+                        operacion.dia,
+                        operacion.hora,
+                        operacion.duracion
+                );
+
+                break;
+
+            case "LIBERAR_AULA":
+
+                operacion.aula.liberar(
+                        operacion.dia,
+                        operacion.hora,
+                        operacion.duracion
+                );
+
+                break;
+
+            case "REGISTRAR_NOTA":
+
+                operacion.estudiante.registrarNota(
+                        operacion.semestre,
+                        operacion.posicion,
+                        operacion.notaNueva
+                );
+
+                break;
+
+            case "CAMBIAR_DISTANCIA":
+
+                universidad.registrarDistancia(
+                        operacion.origen,
+                        operacion.destino,
+                        operacion.distanciaNueva
+                );
+
+                break;
         }
 
         pilaDeshacer.push(operacion);
 
-        System.out.println("Operacion rehecha.");
+        System.out.println("Operacion rehecha correctamente.");
     }
 
-    // 21. ARCHIVO CSV
-    public void cargarArchivoCSV() {
-        System.out.println("\n--- PROCESAMIENTO POR LOTES ---");
+    // PROCESAMIENTO DE ARCHIVOS CSV
 
-        System.out.print("Nombre o ruta del archivo CSV: ");
+    private void cargarArchivoCSV() {
+
+        System.out.println("\n--- CARGAR ARCHIVO CSV ---");
+
+        System.out.print("Ruta del archivo CSV: ");
         String nombreArchivo = teclado.nextLine();
 
         colaSolicitudes.clear();
 
         try (BufferedReader lector =
-                Files.newBufferedReader(Path.of(nombreArchivo))) {
+                     Files.newBufferedReader(Path.of(nombreArchivo))) {
 
-            String linea = lector.readLine();
+            String linea;
+
+            // Se omite la primera linea porque contiene los encabezados.
+            lector.readLine();
 
             while ((linea = lector.readLine()) != null) {
-                if (!linea.trim().isEmpty()) {
+
+                if (!linea.trim().equals("")) {
                     colaSolicitudes.offer(linea);
                 }
             }
 
-            System.out.println("Se encolaron " +
-                    colaSolicitudes.size() + " solicitudes.");
+            System.out.println(
+                    "Solicitudes cargadas: " + colaSolicitudes.size()
+            );
 
         } catch (IOException e) {
-            System.out.println("No se pudo leer el archivo: " +
-                    e.getMessage());
+
+            System.out.println("Error al leer el archivo: " + e.getMessage());
         }
     }
 
-    public void procesarSolicitudesBatch() {
+    private void procesarSolicitudesBatch() {
+
+        if (colaSolicitudes.isEmpty()) {
+            System.out.println("No hay solicitudes para procesar.");
+            return;
+        }
+
+        System.out.println("\n--- PROCESAMIENTO POR LOTES ---");
+
         int exitosas = 0;
         int enEspera = 0;
         int fallidas = 0;
 
-        int total = colaSolicitudes.size();
-        int numero = 0;
-
-        System.out.println("\nProcesando cola...");
-
         while (!colaSolicitudes.isEmpty()) {
-            numero++;
 
             String solicitud = colaSolicitudes.poll();
+
             String[] datos = solicitud.split(",");
 
             if (datos.length != 2) {
+                System.out.println("Solicitud invalida: " + solicitud);
                 fallidas++;
-                System.out.println("Solicitud con formato invalido.");
                 continue;
             }
 
             String id = datos[0].trim();
             String codigo = datos[1].trim();
 
-            Estudiante estudiante = universidad.buscarEstudiante(id);
-            Materia materia = universidad.buscarMateria(codigo);
+            Estudiante estudiante =
+                    universidad.buscarEstudiante(id);
 
-            if (estudiante == null || materia == null) {
+            Materia materia =
+                    universidad.buscarMateria(codigo);
+
+            if (estudiante == null) {
+                System.out.println(
+                        "Solicitud fallida. Estudiante no encontrado: " + id
+                );
+
                 fallidas++;
-                System.out.println("[" + numero + "/" + total +
-                        "] " + id + " -> " + codigo + " -> Fallida");
+                continue;
+            }
+
+            if (materia == null) {
+                System.out.println(
+                        "Solicitud fallida. Materia no encontrada: " + codigo
+                );
+
+                fallidas++;
                 continue;
             }
 
             if (!materia.cumplePrerrequisitos(estudiante)) {
+
+                System.out.println(
+                        "Solicitud fallida. No cumple prerrequisitos: " + id
+                );
+
                 fallidas++;
-                System.out.println("[" + numero + "/" + total +
-                        "] " + id + " -> " + codigo +
-                        " -> Fallida: prerrequisito");
                 continue;
             }
 
-            boolean inscrito = materia.inscribirEstudiante(estudiante);
+            if (materia.inscribirEstudiante(estudiante)) {
 
-            if (inscrito) {
+                Operacion operacion = new Operacion("INSCRIBIR");
+                operacion.estudiante = estudiante;
+                operacion.materia = materia;
+                operacion.estabaEnEspera = false;
+
+                guardarOperacion(operacion);
+
+                System.out.println(
+                        "Inscripcion exitosa: " + id + " - " + codigo
+                );
+
                 exitosas++;
-                System.out.println("[" + numero + "/" + total +
-                        "] " + id + " -> " + codigo + " -> Exitosa");
+
             } else if (materia.estaEnEspera(estudiante)) {
+
+                Operacion operacion = new Operacion("INSCRIBIR");
+                operacion.estudiante = estudiante;
+                operacion.materia = materia;
+                operacion.estabaEnEspera = true;
+
+                guardarOperacion(operacion);
+
+                System.out.println(
+                        "Estudiante agregado a espera: " + id + " - " + codigo
+                );
+
                 enEspera++;
-                System.out.println("[" + numero + "/" + total +
-                        "] " + id + " -> " + codigo + " -> En espera");
+
             } else {
+
+                System.out.println(
+                        "Solicitud fallida. No fue posible inscribir: " + id
+                );
+
                 fallidas++;
-                System.out.println("[" + numero + "/" + total +
-                        "] " + id + " -> " + codigo + " -> Fallida");
             }
         }
 
-        System.out.println("\n=== RESUMEN ===");
-        System.out.println("Exitosas: " + exitosas);
-        System.out.println("En lista de espera: " + enEspera);
-        System.out.println("Fallidas: " + fallidas);
+        System.out.println("\n--- RESUMEN DEL PROCESAMIENTO ---");
+
+        System.out.println("Inscripciones exitosas: " + exitosas);
+        System.out.println("Solicitudes en espera: " + enEspera);
+        System.out.println("Solicitudes fallidas: " + fallidas);
+
+        System.out.println("Procesamiento finalizado.");
     }
 
-    // LECTURA DE NUMEROS
+    // LECTURA DE DATOS
+
     private int leerEntero() {
-        while (!teclado.hasNextInt()) {
-            System.out.print("Ingrese un numero entero valido: ");
-            teclado.nextLine();
+
+        try {
+            int numero = Integer.parseInt(teclado.nextLine());
+            return numero;
+
+        } catch (NumberFormatException e) {
+
+            System.out.println("Debe ingresar un numero entero.");
+            return -1;
         }
-
-        int valor = teclado.nextInt();
-        teclado.nextLine();
-
-        return valor;
     }
 
     private double leerDecimal() {
-        while (!teclado.hasNextDouble()) {
-            System.out.print("Ingrese un numero valido: ");
-            teclado.nextLine();
-        }
 
-        double valor = teclado.nextDouble();
-        teclado.nextLine();
+        try {
+            String valor = teclado.nextLine();
+            valor = valor.replace(",", ".");
 
-        return valor;
-    }
+            return Double.parseDouble(valor);
 
-    // MENU PRINCIPAL
-    public void mostrarMenu() {
-        int opcion = 0;
+        } catch (NumberFormatException e) {
 
-        while (opcion != 22) {
-            System.out.println("\n============================================================");
-            System.out.println("       PLANIFICACION ACADEMICA - SISTEMA UNIVERSITARIO");
-            System.out.println("============================================================");
-
-            System.out.println("\n=== GESTION DE ESTUDIANTES ===");
-            System.out.println("1. Registrar estudiante");
-            System.out.println("2. Buscar estudiante por ID");
-            System.out.println("3. Listar todos los estudiantes");
-            System.out.println("4. Eliminar estudiante");
-
-            System.out.println("\n=== GESTION DE MATERIAS ===");
-            System.out.println("5. Crear materia");
-            System.out.println("6. Agregar pre-requisito");
-            System.out.println("7. Mostrar pre-requisitos");
-            System.out.println("8. Inscribir estudiante");
-            System.out.println("9. Cancelar inscripcion");
-            System.out.println("10. Mostrar cola de espera");
-
-            System.out.println("\n=== GESTION DE HORARIOS ===");
-            System.out.println("11. Reservar horario en aula");
-            System.out.println("12. Liberar horario");
-            System.out.println("13. Consultar disponibilidad");
-
-            System.out.println("\n=== RUTAS ENTRE EDIFICIOS ===");
-            System.out.println("14. Agregar conexion entre edificios");
-            System.out.println("15. Calcular ruta mas corta");
-
-            System.out.println("\n=== REPORTES ACADEMICOS ===");
-            System.out.println("16. Registrar nota");
-            System.out.println("17. Ver reporte academico");
-            System.out.println("18. Navegador de reportes (atras/adelante)");
-
-            System.out.println("\n=== SISTEMA DESHACER/REHACER ===");
-            System.out.println("19. Deshacer ultima operacion");
-            System.out.println("20. Rehacer ultima operacion");
-
-            System.out.println("\n=== PROCESAMIENTO POR LOTES ===");
-            System.out.println("21. Procesar archivo CSV");
-
-            System.out.println("\n22. Salir");
-
-            System.out.print("\nSeleccione una opcion: ");
-            opcion = leerEntero();
-
-            switch (opcion) {
-                case 1:
-                    registrarEstudiante();
-                    break;
-                case 2:
-                    buscarEstudiante();
-                    break;
-                case 3:
-                    listarEstudiantes();
-                    break;
-                case 4:
-                    eliminarEstudiante();
-                    break;
-                case 5:
-                    registrarMateria();
-                    break;
-                case 6:
-                    agregarPrerrequisito();
-                    break;
-                case 7:
-                    mostrarPrerrequisitos();
-                    break;
-                case 8:
-                    inscribirEstudiante();
-                    break;
-                case 9:
-                    cancelarInscripcion();
-                    break;
-                case 10:
-                    mostrarColaEspera();
-                    break;
-                case 11:
-                    reservarHorario();
-                    break;
-                case 12:
-                    liberarHorario();
-                    break;
-                case 13:
-                    consultarDisponibilidad();
-                    break;
-                case 14:
-                    registrarConexion();
-                    break;
-                case 15:
-                    calcularRuta();
-                    break;
-                case 16:
-                    registrarNota();
-                    break;
-                case 17:
-                    abrirReporte();
-                    break;
-                case 18:
-                    navegarReportes();
-                    break;
-                case 19:
-                    deshacerOperacion();
-                    break;
-                case 20:
-                    rehacerOperacion();
-                    break;
-                case 21:
-                    cargarArchivoCSV();
-                    procesarSolicitudesBatch();
-                    break;
-                case 22:
-                    System.out.println("Cerrando sistema...");
-                    break;
-                default:
-                    System.out.println("Opcion no valida.");
-            }
+            System.out.println("Debe ingresar un numero valido.");
+            return -1;
         }
     }
 }
+
