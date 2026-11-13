@@ -29,18 +29,34 @@ public class GestorSistema {
 
     public void cargarEstudiantesIniciales() {
 
-    Estudiante e1 = new Estudiante("Daniel", "1001", "daniel@gmail.com", 3);
-    Estudiante e2 = new Estudiante("Carlos", "1002", "carlos@gmail.com", 2);
-    Estudiante e3 = new Estudiante("Laura", "1003", "laura@gmail.com", 4);
-    Estudiante e4 = new Estudiante("Andres", "1004", "andres@gmail.com", 1);
-    Estudiante e5 = new Estudiante("Sofia", "1005", "sofia@gmail.com", 3);
+        Estudiante e1 = new Estudiante("Daniel", "1001", "daniel@gmail.com", 3);
+        Estudiante e2 = new Estudiante("Carlos", "1002", "carlos@gmail.com", 2);
+        Estudiante e3 = new Estudiante("Laura", "1003", "laura@gmail.com", 4);
+        Estudiante e4 = new Estudiante("Andres", "1004", "andres@gmail.com", 1);
+        Estudiante e5 = new Estudiante("Sofia", "1005", "sofia@gmail.com", 3);
 
-    universidad.registrarEstudiante(e1);
-    universidad.registrarEstudiante(e2);
-    universidad.registrarEstudiante(e3);
-    universidad.registrarEstudiante(e4);
-    universidad.registrarEstudiante(e5);
-}
+        universidad.registrarEstudiante(e1);
+        universidad.registrarEstudiante(e2);
+        universidad.registrarEstudiante(e3);
+        universidad.registrarEstudiante(e4);
+        universidad.registrarEstudiante(e5);
+    }
+    // MATERIAS INICIALES
+
+    public void cargarMateriasIniciales() {
+         Materia m1 = new Materia("MAT01", "Matematicas Basicas", 30, 3);
+         Materia m2 = new Materia("PRO01", "Fundamentos de Programacion", 25, 4);
+         Materia m3 = new Materia("BD01", "Bases de Datos", 20, 3);
+         Materia m4 = new Materia("ED01", "Estructuras de Datos", 20, 4);
+         Materia m5 = new Materia("ARQ01", "Arquitectura de Computadores", 25, 3);
+
+         universidad.registrarMateria(m1);
+         universidad.registrarMateria(m2);
+         universidad.registrarMateria(m3);
+         universidad.registrarMateria(m4);
+         universidad.registrarMateria(m5);
+
+    }
 
     // REGISTRO DE OPERACIONES PARA DESHACER Y REHACER
 
@@ -89,7 +105,7 @@ public class GestorSistema {
 
     public void ejecutar() {
         cargarEstudiantesIniciales();
-
+        cargarMateriasIniciales();
         int opcion;
 
         do {
